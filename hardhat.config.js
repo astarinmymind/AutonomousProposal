@@ -5,7 +5,7 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: "https://eth-mainnet.alchemyapi.io/v2/PUyPNF0TYrRRhOnNZb5WKxPo7Yq3SodY",
+        url: "https://eth-mainnet.alchemyapi.io/v2/UQY0A_j357POL__TwO87Mc-37GvIzuZs",
         blockNumber: 12041561,
       },
       loggingEnabled: true,
