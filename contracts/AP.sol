@@ -17,15 +17,15 @@ interface IAaveGovernanceV2 {
 
 /**
  * @title Autonomous Proposal
- * @dev This contract emits the proposal id and creator of the AP, which is 
- *      returned by calling the create function of Aave Governance V2. 
+ * @dev This contract calls the create function of Aave Governance V2. 
+ *      It emits the address, proposal id, and creator of the AP.
  *      It is called by the Factory contract when the AP attains enough
-*       delegated proposition power.
+ *      delegated proposition power. 
  * @author Angela Lu
  **/
 contract AP {
 
-    event APcreated(uint256 indexed proposalId, address indexed creator);
+    event APcreated(address indexed proposal, uint256 indexed proposalId, address indexed creator);
 
     constructor(
         address creator,
@@ -47,6 +47,6 @@ contract AP {
             _withDelegatecalls,
             _ipfsHash
         );
-        emit APcreated(proposalId, creator);
+        emit APcreated(address(this), proposalId, creator);
     }
 }
