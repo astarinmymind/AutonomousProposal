@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.2;
 
-import "hardhat/console.sol";
-
 contract APFactory {
 
     bytes public bytecode;
 
     mapping (address => uint256) proposalCounts;
+
+    event APdeployed(address indexed proposalAddress, address indexed creator);
 
     constructor(bytes memory _bytecode) {
         bytecode = _bytecode;
@@ -49,15 +49,15 @@ contract APFactory {
         address expectedProposalAddress = _calculateAddress(
             msg.sender, proposalCount, initCodeHash    
         );
-        console.log(expectedProposalAddress);
         assembly {
             proposalAddress := create2(
                 0, add(32, initCodeWithArgs), mload(initCodeWithArgs), salt
             )
         }
-        require(proposalAddress == expectedProposalAddress, "Failed: create2");
-        console.log(proposalAddress);
+        require(proposalAddress == expectedProposalAddress, "create2 failed");
         proposalCounts[msg.sender]++;
+
+        emit APdeployed(proposalAddress, creator);
     }
 
     function calculateAddress(
