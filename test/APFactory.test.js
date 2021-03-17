@@ -8,22 +8,27 @@ chai.use(solidity);
 const DELEGATOR = "0x26a78D5b6d7a7acEEDD1e6eE3229b372A624d8b7";
 const AAVE_SHORT_EXECUTOR = "0xee56e2b3d491590b5b31738cc34d5232f378a8d5";
 const AAVE_GOVERNANCE_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c";
-const AAVE_ECOSYSTEM_RESERVE = "0x25F2226B597E8F9514B3F68F00f494cF4f286491";
 const AAVE_ECOSYSTEM_CONTROLLER = "0x1E506cbb6721B83B1549fa1558332381Ffa61A93";
 const AAVE_TOKEN_ADDRESS = "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9";
+
+/**
+ * @notice The following test checks: 
+ *         (1) given the same arguments, the predicted and deployed AP address is the same
+ *         (2) given enough proposition power, the AP deploys and is created successfully
+ */
 
 describe("APTest", function() {
 
     it("Should deploy an AP once delegated enough proposition power", async function() {
 
         /**
-         * @notice Get bytecode of autonomous proposal.
+         * @notice Get bytecode of the AP.
          */
         const getProposal = await ethers.getContractFactory("AP");
         const bytecode = getProposal.bytecode;
 
         /**
-         * @notice Deploy the autonomous proposal factory.
+         * @notice Deploy the AP factory.
          */
         const getFactory = await ethers.getContractFactory("APFactory");
         const proposalFactory = await getFactory.deploy(bytecode);
@@ -32,7 +37,7 @@ describe("APTest", function() {
         /**
          * @notice Get arguments to create proposal. 
          * In this test proposal, the AAVE Ecosystem Reserve approves the creator of the
-         * autonomous proposal to receive AAVE.
+         * AP to receive AAVE.
          */
         const creator = (await ethers.getSigners())[0].address;
         const governance = AAVE_GOVERNANCE_ADDRESS;
@@ -58,14 +63,14 @@ describe("APTest", function() {
         const delegator = ethers.provider.getSigner(DELEGATOR);
 
         /**
-         * @notice Calculate the address of the Autonomous Proposal.
+         * @notice Calculate the address of the AP.
          */
         const proposalAddress = await proposalFactory.calculateAddress(
             creator, governance, executor, targets, values, signatures, calldatas, withDelegatecalls, ipfsHash
         );
 
         /**
-         * @notice Delegate proposition power to the address of the Autonomous Proposal.
+         * @notice Delegate proposition power to the address of the AP.
          */
         const aaveABI = [
             "function delegateByType(address delegatee, uint8 delegationType)",
@@ -76,7 +81,7 @@ describe("APTest", function() {
         await delegateAAVE.delegateByType(proposalAddress, 1);
 
         /**
-         * @notice Deployed Autonomous Proposal should have same address as predicted. 
+         * @notice Deployed AP should have same address as predicted. 
          */
         await chai.expect(proposalFactory.deployAP(creator, governance, executor, targets, values, signatures, calldatas, withDelegatecalls, ipfsHash))
             .to.emit(proposalFactory, 'APdeployed')

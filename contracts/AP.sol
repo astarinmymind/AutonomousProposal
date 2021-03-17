@@ -15,14 +15,20 @@ interface IAaveGovernanceV2 {
 
 }
 
+/**
+ * @title Autonomous Proposal
+ * @dev This contract emits the proposal id and creator of the AP, which is 
+ *      returned by calling the create function of Aave Governance V2. 
+ *      It is called by the Factory contract when the AP attains enough
+*       delegated proposition power.
+ * @author Angela Lu
+ **/
 contract AP {
-
-    address public creator;
 
     event APcreated(uint256 indexed proposalId, address indexed creator);
 
     constructor(
-        address _creator,
+        address creator,
         address _governance,
         address _executor,
         address[] memory _targets,
@@ -32,7 +38,6 @@ contract AP {
         bool[] memory _withDelegatecalls,
         bytes32 _ipfsHash
     ) {
-        creator = _creator;
         uint256 proposalId = IAaveGovernanceV2(_governance).create(
             _executor,
             _targets,
